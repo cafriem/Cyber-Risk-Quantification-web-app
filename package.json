@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npx serve .",
-    "check": "node --check app.js && node --check engine.js"
+    "check": "node --check app.js && node --check engine.js && node --check engine.test.js",
+    "test": "node --test engine.test.js"
   }
 }
