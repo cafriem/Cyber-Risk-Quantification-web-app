@@ -268,6 +268,8 @@ Closing the gap requires a **ground-up rebuild in a different stack**, not an in
 - Store simulation summaries (not raw samples) in database.
 - Progress indicator via streaming or polling.
 
+**Status:** Core server-side simulation and persistence are implemented. Summary statistics, histogram, loss samples, and exceedance curve data are returned and visualized. Treatment comparison is available in the treatment simulator. The remaining Phase 5 items—background/worker execution above current limits and progress streaming/polling—can be addressed during performance hardening.
+
 ### Phase 6: Risk Analysis UI (FAIR Wizard)
 **Effort:** 3–4 days
 
@@ -371,4 +373,3 @@ Closing the gap requires a **ground-up rebuild in a different stack**, not an in
 3. **Defer Phase 9 (Reports) and Phase 10 (Controls Library)** if time is constrained — they are lower priority than the core quantification workflow.
 4. **Consider the "demo-ready" milestone** as the end of Phase 6: a user can define a scenario, run a simulation, and view results — the core acceptance criteria (spec §58 steps 1–11).
 5. **Add remaining phases iteratively** based on feedback from the demo.
-

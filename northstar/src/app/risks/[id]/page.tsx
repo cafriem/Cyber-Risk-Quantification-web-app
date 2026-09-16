@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db/prisma";
 import { formatMoney } from "@/components/money";
+import { LossHistogram } from "@/components/charts/loss-histogram";
+import { ExceedanceCurve } from "@/components/charts/exceedance-curve";
 
 interface DistRow {
   id: string;
@@ -35,6 +37,8 @@ interface SimRow {
   p95: number;
   p99: number;
   max: number;
+  histogramData: string;
+  losses: string;
 }
 
 interface RiskRow {
@@ -135,6 +139,19 @@ export default async function RiskDetailPage({ params }: { params: Promise<{ id:
                 <p className="font-mono text-sm font-bold text-zinc-900 dark:text-zinc-50">{formatMoney(value, true)}</p>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {latestSim && (
+        <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+            <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">Annual Loss Histogram</h2>
+            <LossHistogram data={JSON.parse(latestSim.histogramData as string)} />
+          </div>
+          <div className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+            <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">Loss Exceedance Curve</h2>
+            <ExceedanceCurve losses={JSON.parse(latestSim.losses as string)} threshold={500000} />
           </div>
         </section>
       )}

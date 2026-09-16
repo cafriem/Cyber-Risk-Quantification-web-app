@@ -92,6 +92,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       p99: result.p99,
       max: result.max,
       histogramData: JSON.stringify(result.histogram),
+      losses: JSON.stringify(result.losses),
     });
 
     await createAuditLog({

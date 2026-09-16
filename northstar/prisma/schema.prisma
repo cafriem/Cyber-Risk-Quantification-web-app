@@ -225,6 +225,7 @@ model SimulationResult {
   p99            Float
   max            Float
   histogramData  String       @default("[]")
+  losses         String       @default("[]")
   createdAt      DateTime     @default(now())
 
   riskScenario   RiskScenario @relation(fields:[riskScenarioId], references:[id], onDelete: Cascade)

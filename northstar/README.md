@@ -70,7 +70,7 @@ Phase 1 complete. See `docs/gap-analysis-and-roadmap.md` for the full roadmap.
 ### Completed
 - Next.js 16 + TypeScript + Tailwind CSS scaffold
 - FAIR calculation engine ported to TypeScript with strict typing
-- 39 unit tests (vitest)
+- 53 unit tests (vitest)
 - Production build verified
 - Prisma 8 (SQLite) database with full schema
 - Auth.js credentials provider with bcrypt password hashing
@@ -88,8 +88,12 @@ Phase 1 complete. See `docs/gap-analysis-and-roadmap.md` for the full roadmap.
 - Multi-year cost/benefit breakdown (cumulative savings and net benefit arrays)
 - 53 unit tests covering the expanded FAIR engine
 - Root `.gitignore`
+- Login page backed by Auth.js credentials
+- Loss histogram, loss exceedance curve, multi-year chart, and treatment comparison visualizations
+- Treatment simulator comparing inherent and residual risk with ROI and recommendations
+- Server-side simulations persist loss samples for exceedance curves
 
-### Next (Phase 5)
-- Login/logout UI
-- Recharts visualizations (histogram, CDF, exceedance curve)
-- Treatment comparison table with ROI
+### Next (Phase 6)
+- Full FAIR analysis wizard (scenario, threat, vulnerability, loss magnitude, simulation, review, treatments)
+- How-calculated explanations and data quality warnings
+- Draft/incomplete analysis saving
