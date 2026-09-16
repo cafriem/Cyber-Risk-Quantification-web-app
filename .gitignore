@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+northstar/.next/
+northstar/out/
+northstar/build/
+
+# Environment
+northstar/.env
+northstar/.env.*
+
+# Database
+northstar/prisma/dev.db
+northstar/prisma/dev.db-journal
+
+# Coverage
+coverage/
+
+# OS / editor
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Generated Prisma artifacts
+northstar/prisma/schema.json
+northstar/prisma/schema.d.ts
+northstar/migrations/
+northstar/prisma-8.md

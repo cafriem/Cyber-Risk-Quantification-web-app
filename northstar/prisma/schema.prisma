@@ -1,0 +1,260 @@
+enum Role {
+  ADMIN
+  RISK_MANAGER
+  ANALYST
+  VIEWER
+  EXECUTIVE
+}
+
+enum RiskStatus {
+  DRAFT
+  QUANTIFYING
+  ASSESSED
+  TREATMENT_PLANNED
+  TREATMENT_IN_PROGRESS
+  MONITORING
+  ACCEPTED
+  TRANSFERRED
+  AVOIDED
+  CLOSED
+}
+
+enum DistributionType {
+  TRIANGULAR
+  UNIFORM
+  NORMAL
+  LOGNORMAL
+  PERT
+}
+
+enum ControlEffectiveness {
+  INEFFECTIVE
+  PARTIALLY_EFFECTIVE
+  EFFECTIVE
+  HIGHLY_EFFECTIVE
+}
+
+enum TreatmentType {
+  MITIGATE
+  TRANSFER
+  AVOID
+  ACCEPT
+}
+
+enum Confidence {
+  VERY_LOW
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+}
+
+model Organization {
+  id        String               @id
+  name      String               @unique
+  currency  String               @default("USD")
+  createdAt DateTime             @default(now())
+  updatedAt temporal.updatedAt()
+
+  users     User[]
+  risks     RiskScenario[]
+  controls  Control[]
+  settings  OrgSettings?
+}
+
+model OrgSettings {
+  id             String       @id
+  organizationId String       @unique
+  currency       String       @default("USD")
+  fiscalYear     Int          @default(2026)
+  iterations     Int          @default(100000)
+
+  organization   Organization @relation(fields:[organizationId], references:[id], onDelete: Cascade)
+}
+
+model User {
+  id             String               @id
+  email          String               @unique
+  name           String
+  passwordHash   String
+  role           Role                 @default(VIEWER)
+  organizationId String
+  createdAt      DateTime             @default(now())
+  updatedAt      temporal.updatedAt()
+
+  organization   Organization         @relation(fields:[organizationId], references:[id], onDelete: Cascade)
+  accounts       Account[]
+  sessions       Session[]
+  auditLogs      AuditLog[]
+}
+
+model Account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+
+  user              User    @relation(fields:[userId], references:[id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user         User     @relation(fields:[userId], references:[id], onDelete: Cascade)
+}
+
+model RiskScenario {
+  id              String               @id
+  organizationId  String
+  riskId          String
+  name            String
+  description     String               
+  asset           String
+  businessProcess String               
+  threatActor     String
+  threatType      String
+  department      String               
+  ownerId         String
+  businessOwnerId String               
+  status          RiskStatus           @default(DRAFT)
+  seed            Int                  @default(42)
+  createdAt       DateTime             @default(now())
+  updatedAt       temporal.updatedAt()
+
+  organization    Organization         @relation(fields:[organizationId], references:[id], onDelete: Cascade)
+  distributions   Distribution[]
+  lossComponents  LossComponent[]
+  treatments      Treatment[]
+  simulations     SimulationResult[]
+  auditLogs       AuditLog[]
+  acceptances     RiskAcceptance[]
+
+  @@unique([organizationId, riskId])
+}
+
+model Distribution {
+  id                String           @id
+  riskScenarioId    String
+  target            String
+  type              DistributionType @default(TRIANGULAR)
+  min               Float?
+  mode              Float?
+  max               Float?
+  mean              Float?
+  standardDeviation Float?
+  lambda            Float?
+  confidence        Confidence       @default(MEDIUM)
+  dataSource        String           
+  notes             String           
+
+  riskScenario      RiskScenario     @relation(fields:[riskScenarioId], references:[id], onDelete: Cascade)
+
+  @@unique([riskScenarioId, target])
+}
+
+model LossComponent {
+  id             String           @id
+  riskScenarioId String
+  category       String
+  name           String
+  type           DistributionType @default(TRIANGULAR)
+  min            Float
+  mode           Float
+  max            Float
+  enabled        Int              @default(1)
+
+  riskScenario   RiskScenario     @relation(fields:[riskScenarioId], references:[id], onDelete: Cascade)
+}
+
+model Treatment {
+  id                     String               @id
+  riskScenarioId         String
+  name                   String
+  description            String               
+  type                   TreatmentType        @default(MITIGATE)
+  implementationCost     Float                @default(0)
+  annualCost             Float                @default(0)
+  tefReduction           Float?
+  vulnerabilityReduction Float?
+  lossReduction          Float?
+  confidence             Confidence           @default(MEDIUM)
+  controlIds             String               
+  createdAt              DateTime             @default(now())
+  updatedAt              temporal.updatedAt()
+
+  riskScenario           RiskScenario         @relation(fields:[riskScenarioId], references:[id], onDelete: Cascade)
+}
+
+model Control {
+  id                   String               @id
+  organizationId       String
+  name                 String
+  description          String               
+  ownerId              String               
+  implementationStatus String               @default("Planned")
+  effectiveness        ControlEffectiveness @default(EFFECTIVE)
+  cost                 Float                @default(0)
+  annualOperatingCost  Float                @default(0)
+
+  organization         Organization         @relation(fields:[organizationId], references:[id], onDelete: Cascade)
+}
+
+model SimulationResult {
+  id             String       @id
+  riskScenarioId String
+  inherent       Int          @default(1)
+  seed           Int          @default(42)
+  iterations     Int          @default(100000)
+  mean           Float
+  median         Float
+  p75            Float
+  p90            Float
+  p95            Float
+  p99            Float
+  max            Float
+  histogramData  String       @default("[]")
+  createdAt      DateTime     @default(now())
+
+  riskScenario   RiskScenario @relation(fields:[riskScenarioId], references:[id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id             String        @id
+  organizationId String
+  userId         String
+  riskScenarioId String?
+  action         String
+  oldValue       String?
+  newValue       String?
+  createdAt      DateTime      @default(now())
+
+  organization   Organization  @relation(fields:[organizationId], references:[id], onDelete: Cascade)
+  user           User          @relation(fields:[userId], references:[id])
+  riskScenario   RiskScenario? @relation(fields:[riskScenarioId], references:[id], onDelete: SetNull)
+}
+
+model RiskAcceptance {
+  id               String       @id
+  riskScenarioId   String
+  acceptedById     String
+  acceptedAt       DateTime     @default(now())
+  expirationDate   DateTime?
+  reason           String
+  expectedLoss     Float
+  residualExposure Float
+  comments         String       
+
+  riskScenario     RiskScenario @relation(fields:[riskScenarioId], references:[id], onDelete: Cascade)
+}
