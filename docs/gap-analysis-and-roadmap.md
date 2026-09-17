@@ -289,6 +289,8 @@ Closing the gap requires a **ground-up rebuild in a different stack**, not an in
 - Data quality warnings (spec §45).
 - Save incomplete analyses.
 
+**Status:** The guided five-step wizard is implemented for scenario definition, threat frequency, vulnerability, loss magnitude, and review. Per-input confidence, data source, assumptions, methodology explanation, and draft/quantify submission are included. A dedicated “add controls” step and granular data-quality warning banners remain open.
+
 ### Phase 7: Treatment Simulator
 **Effort:** 3–4 days
 
@@ -299,6 +301,8 @@ Closing the gap requires a **ground-up rebuild in a different stack**, not an in
 - Treatment variable modeling (which FAIR parameter is affected) (spec §24).
 - Confidence per treatment.
 
+**Status:** Treatment comparison, parameter modeling, confidence display, five-year multi-year chart, and treatment planning status update are implemented. Side-by-side inherent/residual charting beyond the existing comparison and residual summaries remains open.
+
 ### Phase 8: Portfolio Dashboard
 **Effort:** 2–3 days
 
@@ -307,6 +311,8 @@ Closing the gap requires a **ground-up rebuild in a different stack**, not an in
 - Risk exposure by category chart.
 - Inherent vs. residual exposure chart.
 - Portfolio Monte Carlo (independent risks first; architecture supports future correlation) (spec §54).
+
+**Status:** Organization-scoped portfolio dashboard is implemented with EAL, P90/P95, simulated portfolio mean/P90/P95/P99, top 10 risks by expected loss, and exposure by threat type. Independent portfolio Monte Carlo uses persisted annual-loss samples. Inherent-vs-residual portfolio comparison and correlation modeling remain open.
 
 ### Phase 9: Reports
 **Effort:** 2–3 days

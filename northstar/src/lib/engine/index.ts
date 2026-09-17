@@ -10,6 +10,7 @@ export {
   sampleDistribution,
 } from "./distributions";
 export { percentile, histogram, summarize } from "./statistics";
+export type { PortfolioAnalytics, PortfolioRiskInput } from "@/lib/portfolio";
 export { runMonteCarlo, exceedanceProbability } from "./monte-carlo";
 export { calculateFinancials, calculateMultiYearAnalysis } from "./financials";
 export {

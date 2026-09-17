@@ -92,8 +92,11 @@ Phase 1 complete. See `docs/gap-analysis-and-roadmap.md` for the full roadmap.
 - Loss histogram, loss exceedance curve, multi-year chart, and treatment comparison visualizations
 - Treatment simulator comparing inherent and residual risk with ROI and recommendations
 - Server-side simulations persist loss samples for exceedance curves
+- Five-step FAIR analysis wizard with confidence, data source, assumptions, methodology guidance, and draft saving
+- Treatment comparison with affected FAIR parameters, five-year cost/benefit chart, and treatment plan approval
+- Organization-scoped portfolio dashboard with simulated portfolio percentiles, top-risk ranking, and category exposure
 
-### Next (Phase 6)
-- Full FAIR analysis wizard (scenario, threat, vulnerability, loss magnitude, simulation, review, treatments)
-- How-calculated explanations and data quality warnings
-- Draft/incomplete analysis saving
+### Next (Phase 9)
+- Executive summary and management-ready reports
+- PDF export
+- Simplified executive risk view

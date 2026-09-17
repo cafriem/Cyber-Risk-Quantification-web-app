@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db/prisma";
 import { requireRiskAccess } from "@/lib/auth/guard";
-import { runMonteCarlo, calculateFinancials } from "@/lib/engine";
+import { planTreatment } from "@/lib/actions/risks";
+import { runMonteCarlo, calculateFinancials, calculateMultiYearBreakdown } from "@/lib/engine";
 import type { TriangularParams, UniformParams, NormalParams, LognormalParams, PertParams } from "@/lib/engine";
 import { TreatmentComparison } from "@/components/charts/treatment-comparison";
+import { MultiYearChart } from "@/components/charts/multi-year-chart";
 import { formatMoney } from "@/components/money";
 
 function toDistributionParams(record: {
@@ -38,7 +40,7 @@ export default async function TreatmentSimulatorPage({ params }: { params: Promi
   const guard = await requireRiskAccess(id, "risk:read");
   if (!guard.ok) notFound();
 
-  const risk = guard.risk as { name: string };
+  const risk = guard.risk as { name: string; status: string };
   const distributions = await db.orm.Distribution.where({ riskScenarioId: id }).all() as never[];
   const treatments = await db.orm.Treatment.where({ riskScenarioId: id }).all() as never[];
 
@@ -94,11 +96,23 @@ export default async function TreatmentSimulatorPage({ params }: { params: Promi
     .filter((t): t is NonNullable<typeof t> => t !== null)
     .sort((a, b) => b.financials.firstYearRoi - a.financials.firstYearRoi)[0];
 
+  const bestAfter = bestTreatment ? results[bestTreatment.id] : undefined;
+  const multiYear = bestTreatment && bestAfter
+    ? calculateMultiYearBreakdown(
+      inherent.mean,
+      bestAfter.mean,
+      bestTreatment.implementationCost,
+      bestTreatment.annualCost,
+      5,
+    )
+    : null;
+
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
         <Link href={`/risks/${id}`} className="text-sm text-blue-600 hover:underline dark:text-blue-400">← {risk.name}</Link>
         <h1 className="mt-1 text-xl font-bold text-zinc-900 dark:text-zinc-50">Treatment Simulator</h1>
+        <p className="mt-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">Current status: {risk.status}</p>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           {ITERATIONS.toLocaleString()} iterations, seed {SEED} — same seed for all runs (controlled comparison)
         </p>
@@ -141,8 +155,35 @@ export default async function TreatmentSimulatorPage({ params }: { params: Promi
         </section>
       )}
 
+      {multiYear && (
+        <section className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+            Five-Year Cost/Benefit — {bestTreatment?.name}
+          </h2>
+          <MultiYearChart data={multiYear} />
+        </section>
+      )}
+
       {treatments.length === 0 && (
         <p className="text-sm text-zinc-500 dark:text-zinc-400">No treatments defined yet. Add treatments via the API to compare them here.</p>
+      )}
+
+      {treatments.length > 0 && (
+        <section className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">Approve a Treatment Plan</h2>
+          <div className="flex flex-wrap gap-3">
+            {(treatments as { id: string; name: string }[]).map((treatment) => (
+              <form key={treatment.id} action={async () => { "use server"; await planTreatment(id, treatment.id); }}>
+                <button
+                  type="submit"
+                  className="rounded border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300 dark:hover:bg-blue-900"
+                >
+                  Plan: {treatment.name}
+                </button>
+              </form>
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );

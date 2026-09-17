@@ -66,6 +66,7 @@ export function TreatmentComparison({
         <thead>
           <tr className="border-b border-zinc-200 text-left text-xs uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
             <th className="px-3 py-2">Treatment</th>
+            <th className="px-3 py-2">Parameters Affected</th>
             <th className="px-3 py-2 text-right">Impl Cost</th>
             <th className="px-3 py-2 text-right">Annual Cost</th>
             <th className="px-3 py-2 text-right">Expected Loss</th>
@@ -79,6 +80,12 @@ export function TreatmentComparison({
           {rows.map((row) => (
             <tr key={row.name} className="border-b border-zinc-100 last:border-0 dark:border-zinc-800">
               <td className="px-3 py-2 font-medium text-zinc-900 dark:text-zinc-50">{row.name}</td>
+              <td className="px-3 py-2 text-xs text-zinc-500 dark:text-zinc-400">
+                {treatments.find((t) => t.name === row.name)?.tefReduction != null && `TEF −${Math.round((treatments.find((t) => t.name === row.name)?.tefReduction ?? 0) * 100)}% `}
+                {treatments.find((t) => t.name === row.name)?.vulnerabilityReduction != null && `VULN −${Math.round((treatments.find((t) => t.name === row.name)?.vulnerabilityReduction ?? 0) * 100)}% `}
+                {treatments.find((t) => t.name === row.name)?.lossReduction != null && `LM −${Math.round((treatments.find((t) => t.name === row.name)?.lossReduction ?? 0) * 100)}%`}
+                {row.name === "Do Nothing" && "—"}
+              </td>
               <td className="px-3 py-2 text-right font-mono text-zinc-600 dark:text-zinc-300">{row.cost ? formatMoney(row.cost, true) : "—"}</td>
               <td className="px-3 py-2 text-right font-mono text-zinc-600 dark:text-zinc-300">{row.annual ? formatMoney(row.annual, true) : "—"}</td>
               <td className="px-3 py-2 text-right font-mono text-zinc-600 dark:text-zinc-300">{formatMoney(row.mean, true)}</td>
