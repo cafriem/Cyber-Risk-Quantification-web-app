@@ -322,6 +322,8 @@ Closing the gap requires a **ground-up rebuild in a different stack**, not an in
 - PDF export.
 - Executive risk view (simplified, no FAIR jargon) (spec §37).
 
+**Status:** Management report, executive simplified view, report generation engine, and print-to-PDF export are implemented with `report:view` authorization. Reports cover executive summary, portfolio financials, top risks, recommendations, residual risk, assumptions, and methodology. Persistent saved report snapshots and rendered loss-distribution images in PDFs remain open.
+
 ### Phase 10: Controls Library & Settings
 **Effort:** 1–2 days
 
