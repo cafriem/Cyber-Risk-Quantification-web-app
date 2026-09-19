@@ -140,6 +140,7 @@ model RiskScenario {
   simulations     SimulationResult[]
   auditLogs       AuditLog[]
   acceptances     RiskAcceptance[]
+  controls        Control[]
 
   @@unique([organizationId, riskId])
 }
@@ -207,8 +208,10 @@ model Control {
   effectiveness        ControlEffectiveness @default(EFFECTIVE)
   cost                 Float                @default(0)
   annualOperatingCost  Float                @default(0)
+  riskScenarioId       String?
 
   organization         Organization         @relation(fields:[organizationId], references:[id], onDelete: Cascade)
+  riskScenario         RiskScenario?        @relation(fields:[riskScenarioId], references:[id], onDelete: SetNull)
 }
 
 model SimulationResult {

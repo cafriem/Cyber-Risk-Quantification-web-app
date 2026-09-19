@@ -38,7 +38,7 @@ export default async function ReportsPage() {
   }
 
   const [organization, risks, simulations, treatments] = await Promise.all([
-    db.orm.Organization.where({ id: guard.organizationId }).first(),
+    db.orm.Organization.where({ id: guard.organizationId }).first() as unknown as { name: string; currency: string } | undefined,
     db.orm.RiskScenario.where({ organizationId: guard.organizationId }).all() as unknown as RiskRow[],
     db.orm.SimulationResult.all() as unknown as SimRow[],
     db.orm.Treatment.all() as unknown as TreatmentRow[],
@@ -95,17 +95,17 @@ export default async function ReportsPage() {
         <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">Executive Summary</h2>
         <p className="text-sm text-zinc-700 dark:text-zinc-300">
           {report.analyzedScenarios} analyzed scenarios represent an expected annual loss of{" "}
-          <strong>{formatMoney(report.totalEal, true)}</strong>. Implementing the recommended controls would reduce expected
-          annual loss to <strong>{formatMoney(report.residualEal, true)}</strong>, with expected annual savings of{" "}
-          <strong>{formatMoney(report.annualSavings, true)}</strong>.
+          <strong>{formatMoney(report.totalEal, true, organization?.currency)}</strong>. Implementing the recommended controls would reduce expected
+          annual loss to <strong>{formatMoney(report.residualEal, true, organization?.currency)}</strong>, with expected annual savings of{" "}
+          <strong>{formatMoney(report.annualSavings, true, organization?.currency)}</strong>.
         </p>
       </section>
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
-          { label: "Inherent EAL", value: formatMoney(report.totalEal, true) },
-          { label: "Residual EAL", value: formatMoney(report.residualEal, true) },
-          { label: "First-Year Investment", value: formatMoney(report.firstYearInvestment, true) },
+          { label: "Inherent EAL", value: formatMoney(report.totalEal, true, organization?.currency) },
+          { label: "Residual EAL", value: formatMoney(report.residualEal, true, organization?.currency) },
+          { label: "First-Year Investment", value: formatMoney(report.firstYearInvestment, true, organization?.currency) },
           { label: "Portfolio ROI", value: `${report.portfolioRoi.toFixed(0)}%` },
         ].map(({ label, value }) => (
           <div key={label} className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
@@ -144,10 +144,10 @@ export default async function ReportsPage() {
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">{risk.category}</p>
                     </td>
                     <td className="px-4 py-3 text-zinc-700 dark:text-zinc-300">{risk.recommendation}</td>
-                    <td className="px-4 py-3 text-right font-mono">{formatMoney(risk.mean, true)}</td>
-                    <td className="px-4 py-3 text-right font-mono">{formatMoney(risk.residualMean ?? 0, true)}</td>
+                    <td className="px-4 py-3 text-right font-mono">{formatMoney(risk.mean, true, organization?.currency)}</td>
+                    <td className="px-4 py-3 text-right font-mono">{formatMoney(risk.residualMean ?? 0, true, organization?.currency)}</td>
                     <td className="px-4 py-3 text-right font-mono text-green-600 dark:text-green-400">
-                      {formatMoney(risk.mean - (risk.residualMean ?? 0), true)}
+                      {formatMoney(risk.mean - (risk.residualMean ?? 0), true, organization?.currency)}
                     </td>
                     <td className="px-4 py-3 text-right font-mono">{risk.financials ? `${risk.financials.firstYearRoi.toFixed(0)}%` : "—"}</td>
                   </tr>

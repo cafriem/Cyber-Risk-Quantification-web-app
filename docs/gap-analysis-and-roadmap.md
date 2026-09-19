@@ -332,6 +332,8 @@ Closing the gap requires a **ground-up rebuild in a different stack**, not an in
 - Organization settings: currency (USD/AED/EUR/GBP/SAR), org name.
 - User management (admin only).
 
+**Status:** Controls library and organization settings are implemented with RBAC-gated mutations and audit logging. Currency selection propagates to reports. User management creates organization-scoped users with hashed temporary passwords. Pre-seeded baseline catalog and attaching controls to risks remain open.
+
 ### Phase 11: Testing & Security Hardening
 **Effort:** 2–3 days
 

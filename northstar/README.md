@@ -96,7 +96,10 @@ Phase 1 complete. See `docs/gap-analysis-and-roadmap.md` for the full roadmap.
 - Treatment comparison with affected FAIR parameters, five-year cost/benefit chart, and treatment plan approval
 - Organization-scoped portfolio dashboard with simulated portfolio percentiles, top-risk ranking, and category exposure
 - Management report, simplified executive view, and print-to-PDF export
+- Controls library with reusable controls, ownership, effectiveness, and costs
+- Organization settings for currency, fiscal year, default iterations, and user management
 
-### Next (Phase 10)
-- Pre-populated controls library and risk/control attachments
-- Organization settings and user management
+### Next (Phase 11)
+- API integration and authorization tests
+- Rate limiting on simulation endpoints
+- CSRF, XSS, and dependency security review

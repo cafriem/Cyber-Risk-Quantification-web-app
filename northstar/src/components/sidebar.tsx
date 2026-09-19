@@ -4,6 +4,9 @@ const navItems = [
   { href: "/", label: "Dashboard", icon: "◒" },
   { href: "/risks", label: "Risk Register", icon: "▤" },
   { href: "/risks/new", label: "Create Risk", icon: "+" },
+  { href: "/controls", label: "Controls", icon: "⛨" },
+  { href: "/reports", label: "Reports", icon: "◧" },
+  { href: "/settings", label: "Settings", icon: "⚙" },
 ];
 
 export function Sidebar() {
