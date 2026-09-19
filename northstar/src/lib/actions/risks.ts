@@ -90,6 +90,7 @@ export async function createRisk(formData: FormData) {
   const riskId = `RSK-${String(allRisks.length + 1).padStart(3, "0")}`;
 
   const risk = await db.orm.RiskScenario.create({
+    id: crypto.randomUUID(),
     organizationId: guard.organizationId,
     riskId,
     name: parsed.name,
@@ -108,6 +109,7 @@ export async function createRisk(formData: FormData) {
   if (parsed.distributions?.length) {
     for (const dist of parsed.distributions) {
       await db.orm.Distribution.create({
+        id: crypto.randomUUID(),
         riskScenarioId: (risk as { id: string }).id,
         target: dist.target,
         type: dist.type,

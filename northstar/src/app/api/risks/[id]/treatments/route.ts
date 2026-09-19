@@ -26,6 +26,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const input = TreatmentSchema.parse(body);
 
     const treatment = await db.orm.Treatment.create({
+      id: crypto.randomUUID(),
       riskScenarioId: id,
       name: input.name,
       description: input.description,

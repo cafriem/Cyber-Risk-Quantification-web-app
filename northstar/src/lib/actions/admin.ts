@@ -26,6 +26,7 @@ export async function createControl(formData: FormData) {
   });
 
   const control = await db.orm.Control.create({
+    id: crypto.randomUUID(),
     organizationId: guard.organizationId,
     name: input.name,
     description: input.description,
@@ -105,6 +106,7 @@ export async function createUser(formData: FormData) {
 
   const passwordHash = await bcrypt.hash(password, 12);
   const user = await db.orm.User.create({
+    id: crypto.randomUUID(),
     email,
     name,
     passwordHash,

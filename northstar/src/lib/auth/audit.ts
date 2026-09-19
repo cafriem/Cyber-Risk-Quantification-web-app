@@ -9,13 +9,12 @@ export async function createAuditLog(entry: {
   newValue?: string;
 }): Promise<void> {
   await db.orm.AuditLog.create({
-    data: {
-      organizationId: entry.organizationId,
-      userId: entry.userId,
-      riskScenarioId: entry.riskScenarioId,
-      action: entry.action,
-      oldValue: entry.oldValue,
-      newValue: entry.newValue,
-    },
+    id: crypto.randomUUID(),
+    organizationId: entry.organizationId,
+    userId: entry.userId,
+    riskScenarioId: entry.riskScenarioId,
+    action: entry.action,
+    oldValue: entry.oldValue,
+    newValue: entry.newValue,
   });
 }

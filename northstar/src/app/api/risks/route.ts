@@ -32,6 +32,7 @@ export async function POST(request: Request) {
     const riskId = `RSK-${String(allRisks.length + 1).padStart(3, "0")}`;
 
     const risk = await db.orm.RiskScenario.create({
+      id: crypto.randomUUID(),
       organizationId: guard.organizationId,
       riskId,
       name: input.name,
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
     if (error instanceof ZodError) {
       return NextResponse.json({ error: "Validation failed", details: error.issues }, { status: 400 });
     }
+    console.error("Failed to create risk", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

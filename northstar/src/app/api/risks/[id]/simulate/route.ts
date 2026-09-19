@@ -6,6 +6,7 @@ import { SimulationRequestSchema } from "@/lib/validation/schemas";
 import { runMonteCarlo, exceedanceProbability } from "@/lib/engine";
 import type { TriangularParams, UniformParams, NormalParams, LognormalParams, PertParams } from "@/lib/engine";
 import { ZodError } from "zod";
+import { consumeRateLimit } from "@/lib/api/rate-limit";
 
 function toDistributionParams(record: {
   type: string;
@@ -36,6 +37,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { id } = await params;
   const guard = await requireRiskAccess(id, "simulation:run");
   if (!guard.ok) return NextResponse.json({ error: guard.error }, { status: guard.status });
+
+  const rate = consumeRateLimit(`${guard.organizationId}:${guard.session.user.id}`);
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: "Too many simulation requests" },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": Math.max(1, Math.ceil((rate.resetAt - Date.now()) / 1000)).toString(),
+          "X-RateLimit-Remaining": "0",
+        },
+      },
+    );
+  }
 
   try {
     const body = await request.json();
@@ -80,6 +95,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const exceedance = exceedanceProbability(result.losses, threshold);
 
     const simulation = await db.orm.SimulationResult.create({
+      id: crypto.randomUUID(),
       riskScenarioId: id,
       inherent: input.treatmentId ? 0 : 1,
       seed: input.seed ?? (guard.risk as { seed: number }).seed,
